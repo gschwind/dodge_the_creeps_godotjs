@@ -1,0 +1,59 @@
+[gd_scene load_steps=8 format=3 uid="uid://b0f08sv4f4pf"]
+
+[ext_resource type="Script" path="res://main.ts" id="1_daclu"]
+[ext_resource type="PackedScene" uid="uid://cmf3mpnjhmf3i" path="res://player.tscn" id="1_sht6i"]
+[ext_resource type="PackedScene" uid="uid://blkjt7plh1clf" path="res://mob.tscn" id="2_ec0y8"]
+[ext_resource type="PackedScene" uid="uid://cub7obrucpm8a" path="res://hud.tscn" id="4_xvfft"]
+[ext_resource type="AudioStream" uid="uid://b7bqqhvc8ppys" path="res://art/House In a Forest Loop.ogg" id="5_tjwc5"]
+[ext_resource type="AudioStream" uid="uid://qab0y4r1rks8" path="res://art/gameover.wav" id="6_b3q4a"]
+
+[sub_resource type="Curve2D" id="Curve2D_aejek"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 480, 0, 0, 0, 0, 0, 480, 720, 0, 0, 0, 0, 0, 720, 0, 0, 0, 0, 0, 0)
+}
+point_count = 5
+
+[node name="Main" type="Node"]
+script = ExtResource("1_daclu")
+mob_scene = ExtResource("2_ec0y8")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.269494, 0.460209, 0, 1)
+
+[node name="Player" parent="." instance=ExtResource("1_sht6i")]
+
+[node name="MobTimer" type="Timer" parent="."]
+wait_time = 0.5
+
+[node name="ScoreTimer" type="Timer" parent="."]
+
+[node name="StartTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="StartPosition" type="Marker2D" parent="."]
+position = Vector2(240, 450)
+
+[node name="MobPath" type="Path2D" parent="."]
+curve = SubResource("Curve2D_aejek")
+
+[node name="MobSpawnLocation" type="PathFollow2D" parent="MobPath"]
+
+[node name="HUD" parent="." instance=ExtResource("4_xvfft")]
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_tjwc5")
+
+[node name="DeathSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_b3q4a")
+
+[connection signal="hit" from="Player" to="." method="game_over"]
+[connection signal="timeout" from="MobTimer" to="." method="_on_mob_timer_timeout"]
+[connection signal="timeout" from="ScoreTimer" to="." method="_on_score_timer_timeout"]
+[connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
+[connection signal="start_game" from="HUD" to="." method="new_game"]
