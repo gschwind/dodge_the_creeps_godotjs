@@ -2,7 +2,7 @@ const { RigidBody2D } = require("godot");
 const godot = require("godot");
 const jsb = require("godot-jsb");
 
-exports.default = class Mob extends RigidBody2D {
+class Mob extends RigidBody2D {
     // Called when the node enters the scene tree for the first time.
     _ready() {
         // TODO: fix it, array does not seems to work
@@ -20,3 +20,5 @@ exports.default = class Mob extends RigidBody2D {
         this.queue_free();
     }
 };
+
+exports.default = Mob;

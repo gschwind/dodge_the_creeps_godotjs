@@ -1,10 +1,11 @@
 const { Node, Vector2, PackedScene } = require("godot");
 const jsb = require("godot-jsb");
 const godot = require("godot");
+const { signal, export_ } = require("jsb.core");
 
 let PI = 3.1415927;
 
-exports.default = class Main extends Node {
+class Main extends Node {
     mob_scene;
     score;
 
@@ -71,9 +72,6 @@ exports.default = class Main extends Node {
 
 };
 
-jsb.internal.add_script_property(exports.default.prototype, {
-    name: "mob_scene",
-    //type: godot.PackedScene,
-    type: godot.Variant.Type.TYPE_OBJECT,
-    class_name: "PackedScene",
-});
+export_(godot.Variant.Type.TYPE_OBJECT)(Main.prototype, "mob_scene");
+
+exports.default = Main;

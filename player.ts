@@ -8,7 +8,7 @@ function decorator (value, context) {
   console.log("context is: ", context);
 }
 
-exports.default = class Player extends Area2D {
+class Player extends Area2D {
     speed = 400;
     screen_size;
     // Called when the node enters the scene tree for the first time.
@@ -74,10 +74,8 @@ exports.default = class Player extends Area2D {
     }
 };
 
-jsb.internal.add_script_signal(exports.default.prototype, "hit");
+signal()(Player.prototype, "hit");
 
-jsb.internal.add_script_property(exports.default.prototype, {
-    name: "speed",
-    type: godot.Variant.Type.TYPE_INT,
-    hint: exports.default.speed
-});
+export_(godot.Variant.Type.TYPE_INT)(Player.prototype, "speed");
+
+exports.default = Player;
