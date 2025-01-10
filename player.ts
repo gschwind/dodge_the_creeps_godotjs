@@ -1,16 +1,10 @@
-const godot = require("godot");
-const { Area2D, Input, Vector2, PropertyHint } = require("godot");
-const { signal, export_ } = require("jsb.core");
-const jsb = require("godot-jsb");
+import { Variant, Area2D, Input, Vector2, PropertyHint, CollisionShape2D, AnimatedSprite2D, Signal, Signal0, Signal1 } from "godot";
+import { signal, export_ } from "jsb.core";
 
-function decorator (value, context) {
-  console.log("decorated value is:", value);
-  console.log("context is: ", context);
-}
-
-exports.default = class Player extends Area2D {
-    speed = 400;
-    screen_size;
+export default class Player extends Area2D {
+    @signal() hit! : Signal0;
+    @export_(Variant.Type.TYPE_INT) speed = 400;
+    screen_size! : Vector2;
     // Called when the node enters the scene tree for the first time.
     _ready() {
         this.screen_size = this.get_viewport_rect().size;
@@ -19,8 +13,8 @@ exports.default = class Player extends Area2D {
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
-    _process(delta) {
-        let AnimatedSprite2D = this.get_node("AnimatedSprite2D");
+    _process(delta : number) : void {
+        let AnimatedSprite2D = <AnimatedSprite2D>this.get_node("AnimatedSprite2D");
         let velocity = Vector2.ZERO;
         if (Input.is_action_pressed("move_right")) {
             velocity.x += 1;
@@ -60,24 +54,18 @@ exports.default = class Player extends Area2D {
         }
     }
 
-    _on_body_entered(body) {
+    _on_body_entered(body : Player) : void {
         this.hide(); // Player disappears after being hit.
         this.hit.emit();
         // Must be deferred as we can't change physics properties on a physics callback.
-        this.get_node("CollisionShape2D").set_deferred("disabled", true);
+        let s = <CollisionShape2D>this.get_node("CollisionShape2D");
+        s.set_deferred("disabled", true);
     }
 
-    start(pos) {
+    start(pos : Vector2) : void {
         this.position = pos;
         this.show();
-        this.get_node("CollisionShape2D").disabled = false;
+        let s = <CollisionShape2D>this.get_node("CollisionShape2D")
+        s.disabled = false;
     }
 };
-
-jsb.internal.add_script_signal(exports.default.prototype, "hit");
-
-jsb.internal.add_script_property(exports.default.prototype, {
-    name: "speed",
-    type: godot.Variant.Type.TYPE_INT,
-    hint: exports.default.speed
-});
